@@ -2,3 +2,4 @@ finance-datareader
 pandas
 ta
 supabase
+streamlit
