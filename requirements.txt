@@ -1,3 +1,4 @@
 finance-datareader
 pandas
 ta
+supabase
