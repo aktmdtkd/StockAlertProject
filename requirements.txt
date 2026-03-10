@@ -2,4 +2,4 @@ finance-datareader
 pandas
 ta
 supabase
-streamlit
+streamlit>=1.35.0
