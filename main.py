@@ -7,11 +7,11 @@ import datetime
 from email.message import EmailMessage
 from supabase import create_client, Client
 
-# ta 라이브러리의 공식 '클래스' 임포트 (버전 호환성 확보)
-from ta.momentum import RSIIndicator, StochasticOscillator, WilliamsRIndicator, ROCIndicator, MFIIndicator
+# ta 라이브러리의 공식 '클래스' 임포트 (경로 정정 완료)
+from ta.momentum import RSIIndicator, StochasticOscillator, WilliamsRIndicator, ROCIndicator
 from ta.trend import MACD, ADXIndicator, SMAIndicator, EMAIndicator, IchimokuIndicator
 from ta.volatility import BollingerBands, AverageTrueRange, KeltnerChannel
-from ta.volume import OnBalanceVolumeIndicator
+from ta.volume import OnBalanceVolumeIndicator, MFIIndicator
 
 ops = {
     '<': operator.lt, '<=': operator.le,
@@ -30,7 +30,7 @@ def send_email(to_email, subject, body):
         smtp.login(user, pw)
         smtp.send_message(msg)
 
-# 클래스 기반 지표 동적 매핑 엔진 (호환성 및 안정성 강화)
+# 클래스 기반 지표 동적 매핑 엔진
 def calculate_indicator(df, ind_type):
     try:
         if ind_type == "현재가 (Price)": return df['Close'].iloc[-1]
