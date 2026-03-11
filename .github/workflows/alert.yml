@@ -2,7 +2,7 @@ name: StockSignalBot Run
 
 on:
   schedule:
-    - cron: '0 0-7 * * 1-5'
+    - cron: '*/10 0-7 * * 1-5'
   workflow_dispatch:
 
 env:
