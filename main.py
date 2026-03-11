@@ -7,11 +7,11 @@ import datetime
 from email.message import EmailMessage
 from supabase import create_client, Client
 
-# ta 라이브러리의 각 모듈 임포트
-from ta.momentum import rsi, stochastic_oscillator, williams_r, roc, money_flow_index
-from ta.trend import macd, macd_signal, adx, sma_indicator, ema_indicator, ichimoku_conversion_line
-from ta.volatility import BollingerBands, average_true_range, KeltnerChannel
-from ta.volume import on_balance_volume
+# ta 라이브러리의 공식 '클래스' 임포트 (버전 호환성 확보)
+from ta.momentum import RSIIndicator, StochasticOscillator, WilliamsRIndicator, ROCIndicator, MFIIndicator
+from ta.trend import MACD, ADXIndicator, SMAIndicator, EMAIndicator, IchimokuIndicator
+from ta.volatility import BollingerBands, AverageTrueRange, KeltnerChannel
+from ta.volume import OnBalanceVolumeIndicator
 
 ops = {
     '<': operator.lt, '<=': operator.le,
@@ -30,40 +30,40 @@ def send_email(to_email, subject, body):
         smtp.login(user, pw)
         smtp.send_message(msg)
 
-# 지표 동적 매핑 엔진 (수십 개의 if-elif를 대체)
+# 클래스 기반 지표 동적 매핑 엔진 (호환성 및 안정성 강화)
 def calculate_indicator(df, ind_type):
     try:
         if ind_type == "현재가 (Price)": return df['Close'].iloc[-1]
         elif ind_type == "거래량 (Volume)": return df['Volume'].iloc[-1]
         
         # 모멘텀
-        elif ind_type == "RSI (상대강도지수)": return rsi(df['Close'], window=14).iloc[-1]
-        elif ind_type == "Stochastic_K (스토캐스틱 K)": return stochastic_oscillator(high=df['High'], low=df['Low'], close=df['Close'], window=14, smooth_window=3).iloc[-1]
-        elif ind_type == "Williams_%R (윌리엄스 R)": return williams_r(high=df['High'], low=df['Low'], close=df['Close'], lbp=14).iloc[-1]
-        elif ind_type == "ROC (변화율)": return roc(df['Close'], window=12).iloc[-1]
-        elif ind_type == "MFI (자금흐름지수)": return money_flow_index(high=df['High'], low=df['Low'], close=df['Close'], volume=df['Volume'], window=14).iloc[-1]
+        elif ind_type == "RSI (상대강도지수)": return RSIIndicator(close=df['Close'], window=14).rsi().iloc[-1]
+        elif ind_type == "Stochastic_K (스토캐스틱 K)": return StochasticOscillator(high=df['High'], low=df['Low'], close=df['Close'], window=14, smooth_window=3).stoch().iloc[-1]
+        elif ind_type == "Williams_%R (윌리엄스 R)": return WilliamsRIndicator(high=df['High'], low=df['Low'], close=df['Close'], lbp=14).williams_r().iloc[-1]
+        elif ind_type == "ROC (변화율)": return ROCIndicator(close=df['Close'], window=12).roc().iloc[-1]
+        elif ind_type == "MFI (자금흐름지수)": return MFIIndicator(high=df['High'], low=df['Low'], close=df['Close'], volume=df['Volume'], window=14).money_flow_index().iloc[-1]
         
         # 추세
-        elif ind_type == "MACD_Line": return macd(df['Close']).iloc[-1]
-        elif ind_type == "MACD_Signal": return macd_signal(df['Close']).iloc[-1]
-        elif ind_type == "ADX (평균방향성지수)": return adx(high=df['High'], low=df['Low'], close=df['Close'], window=14).iloc[-1]
-        elif ind_type == "SMA_20 (20일 단순이평)": return sma_indicator(df['Close'], window=20).iloc[-1]
-        elif ind_type == "SMA_60 (60일 단순이평)": return sma_indicator(df['Close'], window=60).iloc[-1]
-        elif ind_type == "SMA_120 (120일 단순이평)": return sma_indicator(df['Close'], window=120).iloc[-1]
-        elif ind_type == "SMA_200 (200일 단순이평)": return sma_indicator(df['Close'], window=200).iloc[-1]
-        elif ind_type == "EMA_20 (20일 지수이평)": return ema_indicator(df['Close'], window=20).iloc[-1]
-        elif ind_type == "EMA_60 (60일 지수이평)": return ema_indicator(df['Close'], window=60).iloc[-1]
-        elif ind_type == "Ichimoku_Conversion (일목균형표 전환선)": return ichimoku_conversion_line(high=df['High'], low=df['Low'], window1=9, window2=26).iloc[-1]
+        elif ind_type == "MACD_Line": return MACD(close=df['Close']).macd().iloc[-1]
+        elif ind_type == "MACD_Signal": return MACD(close=df['Close']).macd_signal().iloc[-1]
+        elif ind_type == "ADX (평균방향성지수)": return ADXIndicator(high=df['High'], low=df['Low'], close=df['Close'], window=14).adx().iloc[-1]
+        elif ind_type == "SMA_20 (20일 단순이평)": return SMAIndicator(close=df['Close'], window=20).sma_indicator().iloc[-1]
+        elif ind_type == "SMA_60 (60일 단순이평)": return SMAIndicator(close=df['Close'], window=60).sma_indicator().iloc[-1]
+        elif ind_type == "SMA_120 (120일 단순이평)": return SMAIndicator(close=df['Close'], window=120).sma_indicator().iloc[-1]
+        elif ind_type == "SMA_200 (200일 단순이평)": return SMAIndicator(close=df['Close'], window=200).sma_indicator().iloc[-1]
+        elif ind_type == "EMA_20 (20일 지수이평)": return EMAIndicator(close=df['Close'], window=20).ema_indicator().iloc[-1]
+        elif ind_type == "EMA_60 (60일 지수이평)": return EMAIndicator(close=df['Close'], window=60).ema_indicator().iloc[-1]
+        elif ind_type == "Ichimoku_Conversion (일목균형표 전환선)": return IchimokuIndicator(high=df['High'], low=df['Low'], window1=9, window2=26, window3=52).ichimoku_conversion_line().iloc[-1]
         
         # 변동성
         elif ind_type == "BB_Upper (볼린저 상단)": return BollingerBands(close=df['Close'], window=20, window_dev=2).bollinger_hband().iloc[-1]
         elif ind_type == "BB_Lower (볼린저 하단)": return BollingerBands(close=df['Close'], window=20, window_dev=2).bollinger_lband().iloc[-1]
-        elif ind_type == "ATR (평균진폭)": return average_true_range(high=df['High'], low=df['Low'], close=df['Close'], window=14).iloc[-1]
+        elif ind_type == "ATR (평균진폭)": return AverageTrueRange(high=df['High'], low=df['Low'], close=df['Close'], window=14).average_true_range().iloc[-1]
         elif ind_type == "Keltner_Upper (켈트너 상단)": return KeltnerChannel(high=df['High'], low=df['Low'], close=df['Close'], window=20).keltner_channel_hband().iloc[-1]
         
         # 거래량
-        elif ind_type == "OBV (온밸런스볼륨)": return on_balance_volume(close=df['Close'], volume=df['Volume']).iloc[-1]
-        elif ind_type == "Volume_SMA_20 (20일 평균거래량)": return sma_indicator(df['Volume'], window=20).iloc[-1]
+        elif ind_type == "OBV (온밸런스볼륨)": return OnBalanceVolumeIndicator(close=df['Close'], volume=df['Volume']).on_balance_volume().iloc[-1]
+        elif ind_type == "Volume_SMA_20 (20일 평균거래량)": return SMAIndicator(close=df['Volume'], window=20).sma_indicator().iloc[-1]
         
         else: return None
     except Exception as e:
@@ -82,7 +82,6 @@ if not pending_alerts:
     exit()
 
 stock_cache = {}
-# Lookback Period 최적화: 최근 2년치 데이터만 로드 (장기 이평선 커버용)
 start_date = (datetime.datetime.now() - datetime.timedelta(days=730)).strftime('%Y-%m-%d')
 
 for alert in pending_alerts:
@@ -100,14 +99,12 @@ for alert in pending_alerts:
         else:
             df = stock_cache[stock_code]
             
-        # 200일 이평선 등을 위해 최소 200행 확보 확인
         if len(df) < 200: 
             print(f"[{stock_code}] 과거 데이터 부족 (상장 1년 미만). 일부 지표 연산 불가.")
             continue
 
         current_value = calculate_indicator(df, ind_type)
             
-        # 레드팀 방어: NaN 값 무결성 검증
         if current_value is None or pd.isna(current_value):
             continue
 
