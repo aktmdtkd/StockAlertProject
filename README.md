@@ -79,4 +79,4 @@ $$RSI = 100 - \left[ \frac{100}{1 + \frac{Average\ Gain}{Average\ Loss}} \right]
 ---
 
 **작성일:** 2026년 3월 10일  
-**작성자:** 조형남 (협업자: Gemini)
+**작성자:** 조형남, 장효제
