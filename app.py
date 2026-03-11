@@ -25,10 +25,25 @@ st.title("📈 주식 지표 다중 알람 시스템")
 
 tab1, tab2 = st.tabs(["새로운 알람 등록", "내 알람 관리"])
 
-# 확장된 분석 지표 리스트
+# 확장된 카테고리별 분석 지표 리스트 (app.py)
 INDICATORS = [
-    "현재가 (Price)", "RSI", "MACD", "SMA_20 (20일 이평선)", "SMA_60 (60일 이평선)", 
-    "BB_Upper (볼린저 상단)", "BB_Lower (볼린저 하단)", "ATR (변동성)"
+    # 0. 기본 데이터
+    "현재가 (Price)", "거래량 (Volume)",
+    
+    # 1. 모멘텀 지표 (Momentum)
+    "RSI (상대강도지수)", "Stochastic_K (스토캐스틱 K)", "Williams_%R (윌리엄스 R)", "ROC (변화율)", "MFI (자금흐름지수)",
+    
+    # 2. 추세 지표 (Trend)
+    "MACD_Line", "MACD_Signal", "ADX (평균방향성지수)", 
+    "SMA_20 (20일 단순이평)", "SMA_60 (60일 단순이평)", "SMA_120 (120일 단순이평)", "SMA_200 (200일 단순이평)",
+    "EMA_20 (20일 지수이평)", "EMA_60 (60일 지수이평)",
+    "Ichimoku_Conversion (일목균형표 전환선)",
+    
+    # 3. 변동성 지표 (Volatility)
+    "BB_Upper (볼린저 상단)", "BB_Lower (볼린저 하단)", "ATR (평균진폭)", "Keltner_Upper (켈트너 상단)",
+    
+    # 4. 거래량 파생 지표 (Volume)
+    "OBV (온밸런스볼륨)", "Volume_SMA_20 (20일 평균거래량)"
 ]
 
 # ==========================================
